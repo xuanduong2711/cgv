@@ -3,6 +3,9 @@ from pyspark.sql.types import *
 from datetime import datetime
 from pyspark.sql.functions import col,  udf, explode
 
+import re
+
+
 spark = SparkSession.builder \
     .appName("data cgv") \
     .master("local[*]") \
@@ -16,7 +19,7 @@ schema_type = StructType([
     StructField("times", ArrayType(StringType()), True)
 ])
 
-path = "../data/cgv_movies.json"
+path = "data/cgv_movies.json"
 df = spark.read.option("multiLine", True).schema(schema_type).json(path)
 
 def clean_date(date_str):
@@ -63,9 +66,4 @@ df_exploded = df_final.withColumn("time", explode(col("times_clean"))) \
 
 
 
-db_url = "jdbc:mysql://localhost:3306/movie_db" 
-
-
-# Lưu DataFrame vào bảng `showtimes`
-df.write.jdbc(url=db_url, table="showtimes", mode="append", properties=db_url)
-print("✅ Data đã được lưu vào MySQL từ Spark")
+df_exploded.show()
