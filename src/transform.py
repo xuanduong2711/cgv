@@ -67,3 +67,4 @@ df_exploded = df_final.withColumn("time", explode(col("times_clean"))) \
 
 
 df_exploded.show()
+df_exploded.write.csv("data/output")
